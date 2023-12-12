@@ -31,24 +31,24 @@ class TransferController {
     Logger LOGGER = LoggerFactory.getLogger(TransferController.class);
 
     @Autowired
-    private CompteRepository rep1;
+    private CompteRepository compteRepo;
     @Autowired
-    private TransferRepository re2;
+    private TransferRepository transferRepo;
     @Autowired
-    private AuditService monservice;
+    private AuditService auditService;
     @Autowired
     private ComptService comptService;
-    private final UtilisateurRepository re3;
+    
+    private final UtilisateurRepository userRepo;
 
-    @Autowired
-    TransferController(UtilisateurRepository re3) {
-        this.re3 = re3;
+    TransferController(UtilisateurRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
-    @GetMapping("/listDesTransferts")
+    @GetMapping("/list-of-transferts")
     List<Transfer> loadAll() {
         LOGGER.info("Lister des utilisateurs");
-        var all = re2.findAll();
+        var all = transferRepo.findAll();
 
         if (CollectionUtils.isEmpty(all)) {
             return null;
@@ -57,9 +57,9 @@ class TransferController {
         }
     }
 
-    @GetMapping("/listOfAccounts")
+    @GetMapping("/list-of-accounts")
     List<Compte> loadAllCompte() {
-        List<Compte> all = rep1.findAll();
+        List<Compte> all = compteRepo.findAll();
 
         if (CollectionUtils.isEmpty(all)) {
             return null;
@@ -68,9 +68,9 @@ class TransferController {
         }
     }
 
-    @GetMapping("/lister_utilisateurs")
+    @GetMapping("/list-users")
     List<Utilisateur> loadAllUtilisateur() {
-        List<Utilisateur> all = re3.findAll();
+        List<Utilisateur> all = userRepo.findAll();
 
         if (CollectionUtils.isEmpty(all)) {
             return null;
@@ -79,71 +79,37 @@ class TransferController {
         }
     }
 
-    @PostMapping("/executerTransfers")
+    @PostMapping("/executer-transfers")
     @ResponseStatus(HttpStatus.CREATED)
     public void createTransaction(@RequestBody TransferDto transferDto)
-    throws SoldeDisponibleInsuffisantException, CompteNonExistantException, TransactionException {
-        Compte c1 = rep1.findByNrCompte(transferDto.getNrCompteEmetteur());
-        Compte f12 = rep1.findByNrCompte(transferDto.getNrCompteBeneficiaire());
+            throws SoldeDisponibleInsuffisantException, CompteNonExistantException, TransactionException {
+
         Transfer transfer = new Transfer();
-        //valid compte
-        if (c1 == null || f12 == null) {
-            System.out.println("Compte Non existant");
-            throw new CompteNonExistantException("Compte Non existant");
-        }
-         //valide montant
-        if (transferDto.getMontant().equals(null)) {
-            System.out.println("Montant vide");
-            throw new TransactionException("Montant vide");
-        } else if (transferDto.getMontant().intValue() == 0) {
-            System.out.println("Montant vide");
-            throw new TransactionException("Montant vide");
-        } else if (transferDto.getMontant().intValue() < 10) {
-            System.out.println("Montant minimal de transfer non atteint");
-            throw new TransactionException("Montant minimal de transfer non atteint");
-        } else if (transferDto.getMontant().intValue() > MONTANT_MAXIMAL) {
-            System.out.println("Montant maximal de transfer dépassé");
-            throw new TransactionException("Montant maximal de transfer dépassé");
-        }
-        //valid motif
-        if (transferDto.getMotif().length() < 0) {
-            System.out.println("Motif vide");
-            throw new TransactionException("Motif vide");
-        }
-        //valid sold 
-        if (c1.getSolde().intValue() - transferDto.getMontant().intValue() < 0) {
-            LOGGER.error("Solde insuffisant pour l'utilisateur");
-        }
+        Compte c1 = compteRepo.findByNrCompte(transferDto.getNrCompteEmetteur());
+        Compte f12 = compteRepo.findByNrCompte(transferDto.getNrCompteBeneficiaire());
+
+        comptService.valideMontant(c1, f12, transferDto);
 
         c1.setSolde(c1.getSolde().subtract(transferDto.getMontant()));
-        rep1.save(c1);
+        compteRepo.save(c1);
 
-        f12.setSolde(new BigDecimal(f12.getSolde().intValue() + transferDto.getMontant().intValue()));
-        rep1.save(f12);
-        
+        BigDecimal solde = new BigDecimal(f12.getSolde().intValue() + transferDto.getMontant().intValue());
+        f12.setSolde(solde);
+        compteRepo.save(f12);
+
         transfer.setDateExecution(transferDto.getDate());
         transfer.setCompteBeneficiaire(f12);
         transfer.setCompteEmetteur(c1);
         transfer.setMontantTransfer(transferDto.getMontant());
 
-        re2.save(transfer);
-
-        monservice.auditTransfer("Transfer depuis " + transferDto.getNrCompteEmetteur() + " vers " + transferDto
-        .getNrCompteBeneficiaire() + " d'un montant de "+ transferDto.getMontant().toString());
+        transferRepo.save(transfer);
+        auditService.auditTransfer("Transfer depuis " + transferDto.getNrCompteEmetteur() + " vers " + transferDto
+                .getNrCompteBeneficiaire() + " d'un montant de " + transferDto.getMontant().toString());
     }
 
     @PostMapping("save-transaction")
-    public void save(Transfer Transfer) {
-        re2.save(Transfer);
+    public void save(@RequestBody Transfer Transfer) {
+        transferRepo.save(Transfer);
     }
 
-    @PostMapping("/depot")
-    public String deposit(@RequestParam BigDecimal montant, @RequestParam String numCompte) {
-        if (montant.intValue() < MONTANT_MAXIMAL) {
-            comptService.depot(montant, numCompte);
-            return "Montant deposit avec success";
-        } else {
-            return "Le montant maximal que vous pouvez déposer par opération doit être inférieur à 10 000 DH";
-        }
-    }
 }
