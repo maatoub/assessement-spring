@@ -33,7 +33,6 @@ public class AuditService {
     public void auditDeposit(String message) {
 
         LOGGER.info("Audit de l'événement {}", EventType.DEPOSIT);
-
         AuditTransfer audit = new AuditTransfer();
         audit.setEventType(EventType.DEPOSIT);
         audit.setMessage(message);
