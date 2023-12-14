@@ -30,5 +30,4 @@ public class Transfer {
 
   @Column(length = 200)
   private String motifTransfer;
-
 }

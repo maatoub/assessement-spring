@@ -1,5 +1,4 @@
 package ma.digiup.assignement;
-
 import ma.digiup.assignement.domain.Utilisateur;
 import ma.digiup.assignement.repository.UtilisateurRepository;
 import ma.digiup.assignement.domain.Compte;
@@ -10,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -43,10 +40,8 @@ public class NiceBankApplication implements CommandLineRunner {
 		utilisateur1.setFirstname("first1");
 		utilisateur1.setGender("Male");
 		utilisateur1.setPassword(encoder.encode("1234"));
-
 		utilisateurRepository.save(utilisateur1);
-
-
+		
 		Utilisateur utilisateur2 = new Utilisateur();
 		utilisateur2.setUsername("user2");
 		utilisateur2.setLastname("last2");

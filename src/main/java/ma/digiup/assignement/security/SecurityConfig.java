@@ -2,11 +2,7 @@ package ma.digiup.assignement.security;
 
 import java.util.Arrays;
 import java.util.Collections;
-
 import javax.crypto.spec.SecretKeySpec;
-import javax.sql.DataSource;
-
-import org.apache.catalina.UserDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +10,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -34,7 +28,7 @@ import ma.digiup.assignement.service.AuthService;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
     private static final String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
@@ -64,7 +58,7 @@ public class SecurityConfig {
                                     "n/a",
                                     Collections.emptyList() // Pas d'autorités
                             );
-                        })) 
+                        }))
 
                 .build();
     }
@@ -89,11 +83,11 @@ public class SecurityConfig {
     }
 }
 
-//.jwtAuthenticationConverter(jwt -> {
-//                             String username = jwt.getSubject();
-//                             return new UsernamePasswordAuthenticationToken(
-//                                     username,
-//                                     "n/a",
-//                                     Collections.emptyList() // Pas d'autorités
-//                             );
-//                         })
+// .jwtAuthenticationConverter(jwt -> {
+// String username = jwt.getSubject();
+// return new UsernamePasswordAuthenticationToken(
+// username,
+// "n/a",
+// Collections.emptyList() // Pas d'autorités
+// );
+// })

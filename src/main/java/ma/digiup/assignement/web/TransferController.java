@@ -47,7 +47,7 @@ class TransferController {
     }
 
     @GetMapping("/list-of-transfers")
-    @PreAuthorize(value="isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     List<Transfer> loadAll() {
         LOGGER.info("Lister des transfers");
         List<Transfer> allTransfers = transferRepo.findAll();
