@@ -1,14 +1,9 @@
 package ma.digiup.assignement.service;
-
-import java.math.BigDecimal;
-
 import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ma.digiup.assignement.domain.Compte;
 import ma.digiup.assignement.dto.DepotDto;
 import ma.digiup.assignement.dto.TransferDto;
@@ -25,15 +20,6 @@ public class ComptService {
     private CompteRepository compteRepository;
     public static final int MONTANT_MAXIMAL = 10000;
     Logger LOGGER = LoggerFactory.getLogger(ComptService.class);
-    // public void depot(BigDecimal  montant, String numCompte){
-    //     Compte compte = compteRepository.findByNrCompte(numCompte);
-    //     if(compte == null){
-    //         throw new RuntimeException("Compte non trouvé");
-    //     }else{
-    //         compte.setSolde(compte.getSolde().add(montant));
-    //         compteRepository.save(compte);
-    //     }
-    // }
     public void depot(DepotDto depotDto){
         Compte compte = compteRepository.findByNrCompte(depotDto.getNumCompte());
         if(compte != null){
@@ -76,7 +62,4 @@ public class ComptService {
             LOGGER.error("Solde insuffisant pour l'utilisateur");
         }
     }
-
-
-
 }

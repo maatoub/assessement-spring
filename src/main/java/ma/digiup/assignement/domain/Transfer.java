@@ -1,10 +1,14 @@
 package ma.digiup.assignement.domain;
 
 import javax.persistence.*;
+
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
+@Data
 @Table(name = "TRAN")
 public class Transfer {
   @Id
@@ -27,51 +31,4 @@ public class Transfer {
   @Column(length = 200)
   private String motifTransfer;
 
-  public BigDecimal getMontantTransfer() {
-    return montantTransfer;
-  }
-
-  public void setMontantTransfer(BigDecimal montantTransfer) {
-    this.montantTransfer = montantTransfer;
-  }
-
-  public Date getDateExecution() {
-    return dateExecution;
-  }
-
-  public void setDateExecution(Date dateExecution) {
-    this.dateExecution = dateExecution;
-  }
-
-  public Compte getCompteEmetteur() {
-    return compteEmetteur;
-  }
-
-  public void setCompteEmetteur(Compte compteEmetteur) {
-    this.compteEmetteur = compteEmetteur;
-  }
-
-  public Compte getCompteBeneficiaire() {
-    return compteBeneficiaire;
-  }
-
-  public void setCompteBeneficiaire(Compte compteBeneficiaire) {
-    this.compteBeneficiaire = compteBeneficiaire;
-  }
-
-  public String getMotifTransfer() {
-    return motifTransfer;
-  }
-
-  public void setMotifTransfer(String motifTransfer) {
-    this.motifTransfer = motifTransfer;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
 }

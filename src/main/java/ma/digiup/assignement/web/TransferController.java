@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,44 +39,43 @@ class TransferController {
     private AuditService auditService;
     @Autowired
     private ComptService comptService;
-    
+
     private final UtilisateurRepository userRepo;
 
     TransferController(UtilisateurRepository userRepo) {
         this.userRepo = userRepo;
     }
 
-    @GetMapping("/list-of-transferts")
+    @GetMapping("/list-of-transfers")
+    @PreAuthorize(value="isAuthenticated()")
     List<Transfer> loadAll() {
-        LOGGER.info("Lister des utilisateurs");
-        var all = transferRepo.findAll();
-
-        if (CollectionUtils.isEmpty(all)) {
+        LOGGER.info("Lister des transfers");
+        List<Transfer> allTransfers = transferRepo.findAll();
+        if (CollectionUtils.isEmpty(allTransfers)) {
             return null;
         } else {
-            return CollectionUtils.isEmpty(all) ? all : null;
+            return allTransfers;
         }
     }
 
     @GetMapping("/list-of-accounts")
     List<Compte> loadAllCompte() {
-        List<Compte> all = compteRepo.findAll();
-
-        if (CollectionUtils.isEmpty(all)) {
+        List<Compte> allAccounts = compteRepo.findAll();
+        if (CollectionUtils.isEmpty(allAccounts)) {
             return null;
         } else {
-            return all;
+            return allAccounts;
         }
     }
 
     @GetMapping("/list-users")
-    List<Utilisateur> loadAllUtilisateur() {
-        List<Utilisateur> all = userRepo.findAll();
+    List<Utilisateur> loadAllUsers() {
+        List<Utilisateur> allUsers = userRepo.findAll();
 
-        if (CollectionUtils.isEmpty(all)) {
+        if (CollectionUtils.isEmpty(allUsers)) {
             return null;
         } else {
-            return all;
+            return allUsers;
         }
     }
 
@@ -107,9 +107,9 @@ class TransferController {
                 .getNrCompteBeneficiaire() + " d'un montant de " + transferDto.getMontant().toString());
     }
 
-    @PostMapping("save-transaction")
-    public void save(@RequestBody Transfer Transfer) {
-        transferRepo.save(Transfer);
+    @PostMapping("/save-transaction")
+    public Transfer saveTransaction(@RequestBody Transfer Transfer) {
+        return transferRepo.save(Transfer);
     }
 
 }

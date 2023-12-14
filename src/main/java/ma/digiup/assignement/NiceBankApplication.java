@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -25,14 +29,20 @@ public class NiceBankApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(NiceBankApplication.class, args);
 	}
+   
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 	@Override
 	public void run(String... strings) throws Exception {
+		PasswordEncoder encoder = passwordEncoder();
 		Utilisateur utilisateur1 = new Utilisateur();
 		utilisateur1.setUsername("user1");
 		utilisateur1.setLastname("last1");
 		utilisateur1.setFirstname("first1");
 		utilisateur1.setGender("Male");
+		utilisateur1.setPassword(encoder.encode("1234"));
 
 		utilisateurRepository.save(utilisateur1);
 
@@ -42,7 +52,7 @@ public class NiceBankApplication implements CommandLineRunner {
 		utilisateur2.setLastname("last2");
 		utilisateur2.setFirstname("first2");
 		utilisateur2.setGender("Female");
-
+		utilisateur2.setPassword(encoder.encode("1234"));
 		utilisateurRepository.save(utilisateur2);
 
 		Compte compte1 = new Compte();
