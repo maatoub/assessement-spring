@@ -11,7 +11,7 @@ import ma.digiup.assignement.exceptions.TransactionException;
 import ma.digiup.assignement.repository.CompteRepository;
 import ma.digiup.assignement.repository.TransferRepository;
 import ma.digiup.assignement.service.AuditService;
-import ma.digiup.assignement.service.ComptService;
+import ma.digiup.assignement.service.TransactionService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ class TransferController {
     @Autowired
     private AuditService auditService;
     @Autowired
-    private ComptService comptService;
+    private TransactionService transactionService;
 
     private final UtilisateurRepository userRepo;
 
@@ -87,21 +87,22 @@ class TransferController {
         Transfer transfer = new Transfer();
         Compte c1 = compteRepo.findByNrCompte(transferDto.getNrCompteEmetteur());
         Compte f12 = compteRepo.findByNrCompte(transferDto.getNrCompteBeneficiaire());
-
-        comptService.valideMontant(c1, f12, transferDto);
-
+        BigDecimal solde = new BigDecimal(f12.getSolde().intValue() + transferDto.getMontant().intValue());
+        transactionService.valideComptes(c1, f12);
+        transactionService.valideMontant(transferDto);
+        transactionService.valideMotif(transferDto);
+        // valid sold
+        if (c1.getSolde().intValue() - transferDto.getMontant().intValue() < 0) {
+            LOGGER.error("Solde insuffisant pour l'utilisateur");
+        }
         c1.setSolde(c1.getSolde().subtract(transferDto.getMontant()));
         compteRepo.save(c1);
-
-        BigDecimal solde = new BigDecimal(f12.getSolde().intValue() + transferDto.getMontant().intValue());
         f12.setSolde(solde);
         compteRepo.save(f12);
-
         transfer.setDateExecution(transferDto.getDate());
         transfer.setCompteBeneficiaire(f12);
         transfer.setCompteEmetteur(c1);
         transfer.setMontantTransfer(transferDto.getMontant());
-
         transferRepo.save(transfer);
         auditService.auditTransfer("Transfer depuis " + transferDto.getNrCompteEmetteur() + " vers " + transferDto
                 .getNrCompteBeneficiaire() + " d'un montant de " + transferDto.getMontant().toString());

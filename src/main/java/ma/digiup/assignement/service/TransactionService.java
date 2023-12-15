@@ -14,13 +14,14 @@ import ma.digiup.assignement.repository.CompteRepository;
 
 @Service
 @Transactional
-public class ComptService {
+public class TransactionService {
 
     @Autowired
     private CompteRepository compteRepository;
     public static final int MONTANT_MAXIMAL = 10000;
-    Logger LOGGER = LoggerFactory.getLogger(ComptService.class);
-    public void depot(DepotDto depotDto){
+    Logger LOGGER = LoggerFactory.getLogger(TransactionService.class);
+
+    public void depotSolde(DepotDto depotDto){
         Compte compte = compteRepository.findByNrCompte(depotDto.getNumCompte());
         if(compte != null){
             if (depotDto.getMontant().intValue() < MONTANT_MAXIMAL) {
@@ -34,32 +35,31 @@ public class ComptService {
         }
     }
 
-    public void valideMontant(Compte c1,Compte c2 ,TransferDto tDto) throws SoldeDisponibleInsuffisantException, CompteNonExistantException, TransactionException {
-        if (c2 == null || c1 == null) {
-            System.out.println("Compte Non existant");
+    public void valideComptes(Compte compteEmetteur, Compte compteBeneficiaire) throws CompteNonExistantException {
+        if (compteEmetteur == null || compteBeneficiaire == null) {
+            LOGGER.error("Compte Non existant");
             throw new CompteNonExistantException("Compte Non existant");
         }
-        if (tDto.getMontant().equals(null)) {
-            System.out.println("Montant vide");
+    }
+
+    public void valideMontant(TransferDto transferDto) throws SoldeDisponibleInsuffisantException {
+        if (transferDto.getMontant().equals(null) || transferDto.getMontant().intValue() == 0) {
+            LOGGER.error("Montant vide");
             throw new SoldeDisponibleInsuffisantException("Montant vide");
-        } else if (tDto.getMontant().intValue() == 0) {
-            System.out.println("Montant vide");
-            throw new SoldeDisponibleInsuffisantException("Montant vide");
-        } else if (tDto.getMontant().intValue() < 10) {
-            System.out.println("Montant minimal de transfer non atteint");
+        } else if (transferDto.getMontant().intValue() < 10) {
+            LOGGER.error("Montant minimal de transfer non atteint");
             throw new SoldeDisponibleInsuffisantException("Montant minimal de transfer non atteint");
-        } else if (tDto.getMontant().intValue() > MONTANT_MAXIMAL) {
-            System.out.println("Montant maximal de transfer dépassé");
+        } else if (transferDto.getMontant().intValue() > MONTANT_MAXIMAL) {
+            LOGGER.error("Montant maximal de transfer dépassé");
             throw new SoldeDisponibleInsuffisantException("Montant maximal de transfer dépassé");
         }
-        // valid motif
-        if (tDto.getMotif().length() < 0) {
-            System.out.println("Motif vide");
+    }
+
+    public void valideMotif(TransferDto transferDto) throws TransactionException {
+        if (transferDto.getMotif().length() < 0) {
+            LOGGER.error("Motif vide");
             throw new TransactionException("Motif vide");
         }
-        // valid sold
-        if (c1.getSolde().intValue() - tDto.getMontant().intValue() < 0) {
-            LOGGER.error("Solde insuffisant pour l'utilisateur");
-        }
     }
+    
 }

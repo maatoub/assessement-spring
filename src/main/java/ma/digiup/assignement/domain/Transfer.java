@@ -23,11 +23,13 @@ public class Transfer {
   private Date dateExecution;
 
   @ManyToOne
+  //@Column(nullable = false)
   private Compte compteEmetteur;
 
   @ManyToOne
+  //@Column(nullable = false)
   private Compte compteBeneficiaire;
 
-  @Column(length = 200)
+  @Column(length = 200, nullable = false)
   private String motifTransfer;
 }
