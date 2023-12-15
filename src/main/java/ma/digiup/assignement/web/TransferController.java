@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 
 @RestController(value = "/transfers")
+@RequestMapping("trans/")
+@PreAuthorize("isAuthenticated()")
 class TransferController {
 
     public static final int MONTANT_MAXIMAL = 10000;
@@ -47,7 +51,6 @@ class TransferController {
     }
 
     @GetMapping("/list-of-transfers")
-    @PreAuthorize("isAuthenticated()")
     List<Transfer> loadAll() {
         LOGGER.info("Lister des transfers");
         List<Transfer> allTransfers = transferRepo.findAll();

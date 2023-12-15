@@ -2,6 +2,7 @@ package ma.digiup.assignement;
 import ma.digiup.assignement.domain.Utilisateur;
 import ma.digiup.assignement.repository.UtilisateurRepository;
 import ma.digiup.assignement.domain.Compte;
+import ma.digiup.assignement.domain.RoleUser;
 import ma.digiup.assignement.domain.Transfer;
 import ma.digiup.assignement.repository.CompteRepository;
 import ma.digiup.assignement.repository.TransferRepository;
@@ -9,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+
 import java.math.BigDecimal;
 import java.util.Date; 
 
@@ -32,8 +36,26 @@ public class NiceBankApplication implements CommandLineRunner {
         return new BCryptPasswordEncoder();
     }
 
+	CommandLineRunner commandLineRunner(JdbcUserDetailsManager detailsManager) {
+		PasswordEncoder pEncoder = passwordEncoder();
+		return args -> {
+			detailsManager.createUser(
+					User.withUsername("user1")
+							.password(pEncoder.encode("1234"))
+							.roles("USER").build());
+			detailsManager.createUser(
+					User.withUsername("nasser")
+							.password(pEncoder.encode("1234"))
+							.roles("USER", "admin").build());
+		};
+
+	}
+
+
 	@Override
 	public void run(String... strings) throws Exception {
+	
+
 		PasswordEncoder encoder = passwordEncoder();
 		Utilisateur utilisateur1 = new Utilisateur();
 		utilisateur1.setUsername("user1");
@@ -41,6 +63,7 @@ public class NiceBankApplication implements CommandLineRunner {
 		utilisateur1.setFirstname("first1");
 		utilisateur1.setGender("Male");
 		utilisateur1.setPassword(encoder.encode("1234"));
+		//utilisateur1.setRoles("ADMIN");
 		utilisateurRepository.save(utilisateur1);
 		
 		Utilisateur utilisateur2 = new Utilisateur();

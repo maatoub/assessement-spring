@@ -33,32 +33,80 @@ public class TransferRepositoryTest {
   @Autowired
   private TransferRepository transferRepository;
 
-  Utilisateur getUser () {
+  Utilisateur user1() {
     Utilisateur user = new Utilisateur();
     user.setBirthdate(new Date());
-    user.setFirstname("first");
-    user.setLastname("last");
-    user.setUsername("user");
-    user.setBirthdate(new Date());
+    user.setFirstname("adil");
+    user.setLastname("last1");
+    user.setUsername("saad");
+  //  user.setId( (long) 2);
+    user.setGender("MALE");
+    user.setPassword("1234");
     return user;
   }
 
-  Compte getCompte (){
-    Compte compte =new Compte();
-    compte.setNrCompte("s555");
+  Utilisateur user2() {
+    Utilisateur user = new Utilisateur();
+    user.setBirthdate(new Date());
+    user.setFirstname("khalid");
+    user.setLastname("last2");
+    user.setUsername("ahmed");
+    //user.setId( (long) 3);
+    user.setGender("male");
+    user.setPassword("1234");
+    return user;
+  }
+
+  Compte compteBeneficiaire() {
+    Compte compte = new Compte();
+    compte.setNrCompte("196200356");
     compte.setRib("rib4");
     compte.setSolde(new BigDecimal("8925.00"));
+    //compte.setId((long) 2);
+    compte.setUtilisateur(user1());
+    return compte;
+  }
+
+  Compte compteEmetteur() {
+    Compte compte = new Compte();
+    compte.setNrCompte("545415");
+    compte.setRib("rib2");
+    compte.setSolde(new BigDecimal("1520.50"));
+    //compte.setId((long) 3);
+    compte.setUtilisateur(user2());
     return compte;
   }
 
   @Test
   public void findOne() {
-    
     // given
+    Utilisateur user1 = user1();
+    entityManager.persist(user1);
+    entityManager.flush();
+
+    Utilisateur user2 = user2();
+    entityManager.merge(user2);
+    entityManager.flush();
+
+    Compte compteBeneficiaire = compteBeneficiaire();
+    compteBeneficiaire.setUtilisateur(user1);
+    entityManager.merge(compteBeneficiaire);
+    entityManager.flush();
+
+    Compte compteEmetteur = compteEmetteur();
+    compteEmetteur.setUtilisateur(user2);
+    entityManager.merge(compteEmetteur);
+    entityManager.flush();
+
     Transfer transfer = new Transfer();
     transfer.setMontantTransfer(new BigDecimal("2005.00"));
+    transfer.setCompteBeneficiaire(compteBeneficiaire);
+    transfer.setCompteEmetteur(compteEmetteur);
+    transfer.setDateExecution(new Date());
+    transfer.setMotifTransfer("motif1");
     entityManager.persist(transfer);
     entityManager.flush();
+
     // when
     Optional<Transfer> found = transferRepository.findById(transfer.getId());
 

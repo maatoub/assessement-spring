@@ -31,7 +31,7 @@ import ma.digiup.assignement.service.AuthService;
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
-    private static final String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
+    
 
     @Autowired
     private AuthService authService;
@@ -65,11 +65,13 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
+        String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
         return new NimbusJwtEncoder(new ImmutableSecret<>(keySecret.getBytes()));
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
+        String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
         SecretKeySpec secretKeySpec = new SecretKeySpec(keySecret.getBytes(), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS256).build();
     }

@@ -24,7 +24,7 @@ public class AuthLogin {
     private JwtEncoder jwtEncoder;
 
     @PostMapping("/login")
-    public String login(String username, String password) throws Exception {
+    public String login( String username, String password) throws Exception {
         try {
             Authentication authentication =  authManger.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));

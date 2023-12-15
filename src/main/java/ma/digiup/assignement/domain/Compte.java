@@ -14,17 +14,15 @@ public class Compte {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @Column(length = 16, unique = true)
+  @Column(length = 16, unique = true, nullable = false)
   private String nrCompte;
-
+  @Column(length = 16, unique = true, nullable = false)
   private String rib;
 
-  @Column(precision = 16, scale = 2)
+  @Column(precision = 16, scale = 2, nullable = false)
   private BigDecimal solde;
 
-  @ManyToOne()
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "utilisateur_id")
   private Utilisateur utilisateur;
-
-
 }

@@ -23,13 +23,13 @@ public class MoneyDeposit {
   @Temporal(TemporalType.TIMESTAMP)
   private Date dateExecution;
 
-  @Column
+  @Column(nullable = false)
   private String nom_prenom_emetteur;
 
   @ManyToOne
   private Compte compteBeneficiaire;
 
-  @Column(length = 200)
+  @Column(length = 200, nullable = false)
   private String motifDeposit;
 
 }
