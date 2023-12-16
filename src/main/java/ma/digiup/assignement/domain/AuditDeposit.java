@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "AUDIT_D")
+@Table(name = "AUDIT_DEPOSIT")
 public class AuditDeposit {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

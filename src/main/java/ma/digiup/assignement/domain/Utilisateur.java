@@ -3,9 +3,7 @@ package ma.digiup.assignement.domain;
 import javax.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
@@ -32,11 +30,4 @@ public class Utilisateur implements Serializable {
 
     @Temporal(TemporalType.DATE)
     private Date birthdate;
-
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // private List<RoleUser> roles;
-
-    // public Utilisateur() {
-    // this.roles = new ArrayList<>();
-    // }
 }

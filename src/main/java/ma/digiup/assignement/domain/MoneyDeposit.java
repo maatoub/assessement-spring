@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "DEP")
+@Table(name = "MONEY_DEPOSIT")
 public class MoneyDeposit {
 
   @Id

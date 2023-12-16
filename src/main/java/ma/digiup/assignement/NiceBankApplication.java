@@ -1,8 +1,8 @@
 package ma.digiup.assignement;
+
 import ma.digiup.assignement.domain.Utilisateur;
 import ma.digiup.assignement.repository.UtilisateurRepository;
 import ma.digiup.assignement.domain.Compte;
-import ma.digiup.assignement.domain.RoleUser;
 import ma.digiup.assignement.domain.Transfer;
 import ma.digiup.assignement.repository.CompteRepository;
 import ma.digiup.assignement.repository.TransferRepository;
@@ -10,14 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-
 import java.math.BigDecimal;
-import java.util.Date; 
-
+import java.util.Date;
 
 @SpringBootApplication
 public class NiceBankApplication implements CommandLineRunner {
@@ -31,30 +27,13 @@ public class NiceBankApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(NiceBankApplication.class, args);
 	}
-   
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-	CommandLineRunner commandLineRunner(JdbcUserDetailsManager detailsManager) {
-		PasswordEncoder pEncoder = passwordEncoder();
-		return args -> {
-			detailsManager.createUser(
-					User.withUsername("user1")
-							.password(pEncoder.encode("1234"))
-							.roles("USER").build());
-			detailsManager.createUser(
-					User.withUsername("nasser")
-							.password(pEncoder.encode("1234"))
-							.roles("USER", "admin").build());
-		};
-
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
-
 
 	@Override
 	public void run(String... strings) throws Exception {
-	
 
 		PasswordEncoder encoder = passwordEncoder();
 		Utilisateur utilisateur1 = new Utilisateur();
@@ -63,9 +42,9 @@ public class NiceBankApplication implements CommandLineRunner {
 		utilisateur1.setFirstname("first1");
 		utilisateur1.setGender("Male");
 		utilisateur1.setPassword(encoder.encode("1234"));
-		//utilisateur1.setRoles("ADMIN");
+		// utilisateur1.setRoles("ADMIN");
 		utilisateurRepository.save(utilisateur1);
-		
+
 		Utilisateur utilisateur2 = new Utilisateur();
 		utilisateur2.setUsername("user2");
 		utilisateur2.setLastname("last2");

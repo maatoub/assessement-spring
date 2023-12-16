@@ -16,6 +16,7 @@ import ma.digiup.assignement.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
@@ -31,7 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @PreAuthorize("isAuthenticated()")
 class TransferController {
 
-    public static final int MONTANT_MAXIMAL = 10000;
+    @Value("${montant.maximal}")
+    private int MONTANT_MAXIMAL;
 
     Logger LOGGER = LoggerFactory.getLogger(TransferController.class);
 
@@ -43,12 +45,8 @@ class TransferController {
     private AuditService auditService;
     @Autowired
     private TransactionService transactionService;
-
-    private final UtilisateurRepository userRepo;
-
-    TransferController(UtilisateurRepository userRepo) {
-        this.userRepo = userRepo;
-    }
+    @Autowired   
+    private UtilisateurRepository userRepo;
 
     @GetMapping("/list-of-transfers")
     List<Transfer> loadAll() {
@@ -94,7 +92,6 @@ class TransferController {
         transactionService.valideComptes(c1, f12);
         transactionService.valideMontant(transferDto);
         transactionService.valideMotif(transferDto);
-        // valid sold
         if (c1.getSolde().intValue() - transferDto.getMontant().intValue() < 0) {
             LOGGER.error("Solde insuffisant pour l'utilisateur");
         }

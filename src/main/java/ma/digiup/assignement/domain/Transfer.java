@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "TRAN")
+@Table(name = "TRANSFER")
 public class Transfer {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

@@ -22,7 +22,7 @@ public class Compte {
   @Column(precision = 16, scale = 2, nullable = false)
   private BigDecimal solde;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "utilisateur_id")
   private Utilisateur utilisateur;
 }

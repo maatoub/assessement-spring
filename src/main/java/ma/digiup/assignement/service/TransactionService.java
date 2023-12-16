@@ -3,6 +3,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ma.digiup.assignement.domain.Compte;
 import ma.digiup.assignement.dto.DepotDto;
@@ -18,7 +19,8 @@ public class TransactionService {
 
     @Autowired
     private CompteRepository compteRepository;
-    public static final int MONTANT_MAXIMAL = 10000;
+    @Value("${montant.maximal}")
+    private int MONTANT_MAXIMAL;
     Logger LOGGER = LoggerFactory.getLogger(TransactionService.class);
 
     public void depotSolde(DepotDto depotDto){

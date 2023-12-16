@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,8 +32,8 @@ import ma.digiup.assignement.service.AuthService;
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
-    
-
+    @Value("${key.secret}")
+    private String keySecret;
     @Autowired
     private AuthService authService;
 
@@ -56,7 +57,7 @@ public class SecurityConfig {
                             return new UsernamePasswordAuthenticationToken(
                                     username,
                                     "n/a",
-                                    Collections.emptyList() // Pas d'autorités
+                                    Collections.emptyList()
                             );
                         }))
 
@@ -65,13 +66,11 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
         return new NimbusJwtEncoder(new ImmutableSecret<>(keySecret.getBytes()));
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String keySecret = "a3f5b3b7a7c3d4e5f3e6d7c2b3a4c5e6f3a4b5c6d7e3f2a3b4c5d6e7f8a9b2c3";
         SecretKeySpec secretKeySpec = new SecretKeySpec(keySecret.getBytes(), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS256).build();
     }
@@ -84,12 +83,3 @@ public class SecurityConfig {
         return new ProviderManager(Arrays.asList(dao));
     }
 }
-
-// .jwtAuthenticationConverter(jwt -> {
-// String username = jwt.getSubject();
-// return new UsernamePasswordAuthenticationToken(
-// username,
-// "n/a",
-// Collections.emptyList() // Pas d'autorités
-// );
-// })
